@@ -46,11 +46,11 @@ def delete_task(task_id):
         return {"error": str(e)}, 400
 
 
-@task_bp.route('<int:task_id>/complete', methods=['POST'])
-def complete_task(task_id):
+@task_bp.route('<int:occurrence_id>/complete', methods=['POST'])
+def complete_task(occurrence_id):
     """Mark a task as completed"""
     try:
-        completion = TaskService.complete_task(task_id)
+        completion = TaskService.complete_task(occurrence_id)
         if completion:
             return {"message": "Task marked as completed"}, 200
         return {"error": "Task not found"}, 404

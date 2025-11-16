@@ -63,7 +63,7 @@ class TaskOccurrences(db.Model):
     task = db.relationship("Task", back_populates="occurrences")
 
     def __repr__(self):
-        return f"<TaskOccurrences id={self.id} task_id={self.task_id} date={self.occurrence_date}>"
+        return f"<TaskOccurrences id={self.id} task_id={self.task_id} date={self.next_due_at}>"
 
 class TaskCompletion(db.Model):
     __tablename__ = "task_completions"

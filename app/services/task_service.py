@@ -17,24 +17,44 @@ class TaskService:
         'sun': 6,
     }
 
+    # -- HELPER FUNCTION --
+    # Gets the next occurrence of FREQUENCY (mon = get next monday, tue = get next tuesday)
     @staticmethod
-    def get_next_due_date(frequency):
-        """Calculate next due date based on day of week"""
+    def get_next_due_date(frequency, occurrence_due_date=datetime.now()):
+        """Calculate the next due date based on weekly frequency rules."""
+
         if frequency.lower() not in TaskService.DAY_MAPPING:
-            raise ValueError(f"Invalid frequency. Must be one of: {', '.join(TaskService.DAY_MAPPING.keys())}")
-        
+            raise ValueError(
+                f"Invalid frequency. Must be one of: {', '.join(TaskService.DAY_MAPPING.keys())}"
+            )
+
         target_weekday = TaskService.DAY_MAPPING[frequency.lower()]
-        today = datetime.now()
-        current_weekday = today.weekday()
-        
-        # Calculate days until target day
-        days_ahead = target_weekday - current_weekday
-        if days_ahead <= 0:  # Target day already happened this week
-            days_ahead += 7
-        
-        next_due = today + timedelta(days=days_ahead)
-        # Set to end of day
-        return next_due.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        occurrence_day = occurrence_due_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        # RULE 1: If occurrence due date is earlier than today → base from TODAY
+        if occurrence_day < today:
+            base_date = today
+        else:
+            # RULE 2: If due today or in the future → base from OCCURRENCE DUE DATE
+            base_date = occurrence_day
+
+        base_weekday = base_date.weekday()
+
+        # Calculate how many days until the next target weekday
+        days_ahead = target_weekday - base_weekday
+        if days_ahead <= 0:
+            days_ahead += 7  # next week
+
+        next_due = base_date + timedelta(days=days_ahead)
+
+        # Set due time to end of day
+        next_due = next_due.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        return next_due
+
+
 
     @staticmethod
     def create_task(user_id, title, frequency):
@@ -95,19 +115,29 @@ class TaskService:
         return False
 
     @staticmethod
-    def complete_task(task_id):
-        """Mark a task as completed and create next occurrence"""
+    def complete_task(occurrence_id):
+        """Mark a task as completed and create next occurrence
+        """
+        occurrence = TaskOccurrences.query.get(occurrence_id)
+        if not occurrence:
+            return None # TODO: make proper response for this
+
+        task_id = occurrence.task_id
+
         task = Task.query.get(task_id)
         if not task:
             return None
-        
+            
         # Get the current occurrence
         current_occurrence = TaskOccurrences.query.filter_by(task_id=task_id).order_by(
-            TaskOccurrences.next_due_at.desc()
+            TaskOccurrences.next_due_at
         ).first()
         
         if not current_occurrence:
             return None
+
+        if occurrence.id != current_occurrence.id:
+            return None # TODO: response "not most recent task!"
         
         # Create completion record
         completion = TaskCompletion(task_id=task_id)
@@ -123,12 +153,11 @@ class TaskService:
             task.streak = 1
         
         # Create next occurrence
-        next_due_at = TaskService.get_next_due_date(current_occurrence.frequency)
-        next_occurrence = TaskOccurrences(
-            task_id=task_id,
-            frequency=current_occurrence.frequency,
-            next_due_at=next_due_at,
-        )
-        db.session.add(next_occurrence)
+        next_due_at = TaskService.get_next_due_date(occurrence.frequency, occurrence.next_due_at)
+
+        occurrence.next_due_at = next_due_at
+
+        print(occurrence)
+        
         db.session.commit()
         return completion
