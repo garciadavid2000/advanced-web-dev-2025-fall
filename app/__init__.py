@@ -1,6 +1,6 @@
 from flask import Flask
 from app.extensions import db
-from app.controllers import task_bp
+from app.controllers import task_bp, user_bp
 
 
 def create_app(config_name='development'):
@@ -18,6 +18,7 @@ def create_app(config_name='development'):
 
     # Register blueprints
     app.register_blueprint(task_bp)
+    app.register_blueprint(user_bp)
 
     # Create tables
     with app.app_context():
