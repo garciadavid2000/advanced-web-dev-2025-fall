@@ -1,4 +1,5 @@
 from app.extensions import db
+from datetime import datetime
 
 
 class User(db.Model):
@@ -8,7 +9,7 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     name = db.Column(db.String(255),)
     created_at = db.Column(
-        db.DateTime, nullable=False, default=db.func.now()
+        db.DateTime, nullable=False, default=datetime.now()
     )
 
     # relationships
