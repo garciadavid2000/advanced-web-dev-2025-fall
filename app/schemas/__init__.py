@@ -1,6 +1,6 @@
-# schemas.py
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
-from models import db, User, Task, TaskCompletion
+from app.models import User, Task, TaskCompletion
+from app.extensions import db
 
 
 class UserSchema(SQLAlchemyAutoSchema):
