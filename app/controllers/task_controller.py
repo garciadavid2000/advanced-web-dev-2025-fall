@@ -12,10 +12,11 @@ def create_task():
         task = TaskService.create_task(
             user_id=data.get('user_id'),
             title=data.get('title'),
-            frequency_cron=data.get('frequency_cron'),
-            next_due_at=data.get('next_due_at')
+            frequency=data.get('frequency')
         )
         return task_schema.dump(task), 201
+    except ValueError as e:
+        return {"error": str(e)}, 400
     except Exception as e:
         return {"error": str(e)}, 400
 
