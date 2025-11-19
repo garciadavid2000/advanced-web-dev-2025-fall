@@ -45,6 +45,8 @@ class UserService:
                     if existing:
                         raise ValueError(f"Email {value} is already taken")
                 setattr(user, key, value)
+            else:
+                raise Exception(f"Cannot update field: {key}")
         
         db.session.commit()
         return user
