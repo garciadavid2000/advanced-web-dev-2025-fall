@@ -1,7 +1,7 @@
-from flask import request, jsonify
+from flask import request
 from app.controllers import task_bp
 from app.services.task_service import TaskService
-from app.schemas import task_schema, tasks_schema
+from app.schemas import task_schema
 
 
 @task_bp.route('', methods=['POST'])
@@ -23,14 +23,27 @@ def create_task():
 
 @task_bp.route('', methods=['GET'])
 def get_tasks():
-    """Get all tasks for a user"""
+    """Get all tasks for a user, grouped by due date"""
     try:
         user_id = request.args.get('user_id')
         if not user_id:
             return {"error": "user_id is required"}, 400
         
-        tasks = TaskService.get_user_tasks(user_id)
-        return tasks_schema.dump(tasks), 200
+        grouped_tasks = TaskService.get_user_tasks(user_id)
+        
+        # Convert to JSON-serializable format
+        result = {}
+        for due_date, occurrences in grouped_tasks.items():
+            # occurrences is already a list of dicts, just convert datetime to string
+            result[str(due_date)] = [
+                {
+                    **occ,
+                    'next_due_at': occ['next_due_at'].isoformat()
+                }
+                for occ in occurrences
+            ]
+        
+        return result, 200
     except Exception as e:
         return {"error": str(e)}, 400
 

@@ -1,6 +1,7 @@
 from app.extensions import db
 from app.models import Task, TaskCompletion, TaskOccurrences
 from datetime import datetime, timedelta
+from collections import defaultdict, OrderedDict
 
 
 class TaskService:
@@ -101,8 +102,42 @@ class TaskService:
 
     @staticmethod
     def get_user_tasks(user_id):
-        """Get all tasks for a user"""
-        return Task.query.filter_by(user_id=user_id).all()
+        """Get all task occurrences for a user with task details, grouped by due date
+        
+        Args:
+            user_id: User ID
+            
+        Returns:
+            Dictionary with due dates as keys and lists of occurrence data (including
+            task title and streak) as values, sorted by due date
+        """
+        
+        # Query with JOIN to get occurrences with their task details
+        occurrences_with_tasks = db.session.query(
+            TaskOccurrences,
+            Task.title,
+            Task.streak
+        ).join(Task).filter(Task.user_id == user_id).all()
+        
+        # Group by due date
+        grouped = defaultdict(list)
+        for occurrence, task_title, streak in occurrences_with_tasks:
+            due_date = occurrence.next_due_at.date()
+            # Create a dictionary with occurrence data and task info
+            occurrence_data = {
+                'id': occurrence.id,
+                'task_id': occurrence.task_id,
+                'frequency': occurrence.frequency,
+                'next_due_at': occurrence.next_due_at,
+                'title': task_title,
+                'streak': streak
+            }
+            grouped[due_date].append(occurrence_data)
+        
+        # Sort by due date and return as ordered dictionary
+        sorted_grouped = OrderedDict(sorted(grouped.items()))
+        
+        return sorted_grouped
 
     @staticmethod
     def delete_task(task_id):
