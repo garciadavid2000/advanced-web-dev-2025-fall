@@ -20,6 +20,21 @@ def create_task():
     except Exception as e:
         return {"error": str(e)}, 400
 
+@task_bp.route('<int:task_id>', methods=['PUT'])
+def update_task_title(task_id):
+    """Update a task's title"""
+    try:
+        data = request.get_json()
+        new_title = data.get('title')
+        if not new_title:
+            return {"error": "title is required"}, 400
+        
+        task = TaskService.update_task_name(task_id, new_title)
+        if task:
+            return task_schema.dump(task), 200
+        return {"error": "Task not found"}, 404
+    except Exception as e:
+        return {"error": str(e)}, 400
 
 @task_bp.route('', methods=['GET'])
 def get_tasks():

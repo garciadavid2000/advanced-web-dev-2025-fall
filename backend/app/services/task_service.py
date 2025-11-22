@@ -140,6 +140,16 @@ class TaskService:
         return sorted_grouped
 
     @staticmethod
+    def update_task_name(task_id, new_title):
+        """Update the title of a task"""
+        task = Task.query.get(task_id)
+        if task:
+            task.title = new_title
+            db.session.commit()
+            return task
+        return None
+
+    @staticmethod
     def delete_task(task_id):
         """Delete a task and all its occurrences"""
         task = Task.query.get(task_id)
