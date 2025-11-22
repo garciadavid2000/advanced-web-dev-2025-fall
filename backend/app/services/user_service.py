@@ -33,11 +33,12 @@ class UserService:
     # -----------------  -----------------
     
     @staticmethod
-    def get_or_create_google_user(google_id, email):
+    def get_or_create_google_user(google_id, email, name):
         """
         Find user using google_id or email.
         If none exists, create a new user linked to Google.
         """
+        print(google_id, email, name)
         user = None
 
         # Try finding by google_id first
@@ -64,11 +65,10 @@ class UserService:
 
             return user
         
-        # If no user exists, create a new one
         new_user = User(
             email=email,
             google_id=google_id,
-            last_login=datetime.now()
+            name=name
         )
 
         db.session.add(new_user)

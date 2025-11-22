@@ -2,9 +2,6 @@ import os
 from authlib.integrations.flask_client import OAuth
 
 
-oauth = OAuth()
-
-
 class Config:
     """Base configuration"""
     SQLALCHEMY_TRACK_MODIFICATIONS = False

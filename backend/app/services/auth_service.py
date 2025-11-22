@@ -12,14 +12,18 @@ class AuthService:
     @staticmethod
     def handle_google_callback(google):
         token = google.authorize_access_token()
-        userinfo = google.parse_id_token(token)
+        userinfo = google.userinfo()
 
-        google_id = userinfo.get("id")
+        print(userinfo)
+
+        google_id = userinfo.get("sub")
         email = userinfo.get("email")
+        name = userinfo.get("name")
 
         user = UserService.get_or_create_google_user(
             google_id=google_id,
-            email=email
+            email=email,
+            name=name
         )
 
         return user

@@ -1,7 +1,7 @@
 from flask import Flask
-from app.extensions import db
+from app.extensions import db, oauth, init_oauth
 from app.controllers import task_bp, user_bp, auth_bp
-from config import oauth, config
+from config import config
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from dotenv import load_dotenv
@@ -16,8 +16,6 @@ def create_app(config_name='development'):
 
     app.config.from_object(config[config_name])
 
-    oauth.init_app(app)
-
     # Enable foreign key support for SQLite
     if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
         @event.listens_for(Engine, "connect")
@@ -28,18 +26,8 @@ def create_app(config_name='development'):
 
     # Initialize extensions
     db.init_app(app)
-
-    # Setting up OAuth
-    google = oauth.register(
-        name='google',
-        client_id=app.config["GOOGLE_CLIENT_ID"],
-        client_secret=app.config["GOOGLE_CLIENT_SECRET"],
-        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-        client_kwargs={
-            'scope': 'openid email profile https://www.googleapis.com/auth/calendar'
-        }
-    )
-
+    init_oauth(app)
+    
     # Register blueprints
     app.register_blueprint(task_bp)
     app.register_blueprint(user_bp)

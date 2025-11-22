@@ -1,7 +1,7 @@
 from flask import redirect, request
 from app.controllers import auth_bp
 from app.services.auth_service import AuthService
-from config import oauth
+from app.extensions import oauth
 from app.utils.session_manager import create_session, clear_session
 
 

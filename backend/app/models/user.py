@@ -7,7 +7,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    name = db.Column(db.String(255),),
+    name = db.Column(db.String(255),)
     google_id = google_id = db.Column(db.String(255), unique=True, nullable=True)
     created_at = db.Column(
         db.DateTime, nullable=False, default=datetime.now()
@@ -20,5 +20,5 @@ class User(db.Model):
         cascade="all, delete-orphan"
     )
 
-    def __repr__(self):
-        return f"<User id={self.id} email={self.email!r}>"
+    # def __repr__(self):
+    #     return f"<User id={self.id} email={self.email!r}>"
