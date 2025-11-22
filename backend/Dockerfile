@@ -17,4 +17,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Command to run the application
-CMD ["python", "run.py"]
+# CMD ["python", "run.py"]
+CMD ["sh", "-c", "if [ \"$FLASK_ENV\" = \"production\" ]; then gunicorn --bind 0.0.0.0:5000 --workers 4 'app:create_app()'; else python run.py; fi"]
