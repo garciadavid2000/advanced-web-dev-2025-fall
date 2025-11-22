@@ -1,19 +1,20 @@
 from flask import Flask
-from app.extensions import db
-from app.controllers import task_bp, user_bp
+from app.extensions import db, oauth, init_oauth
+from app.controllers import task_bp, user_bp, auth_bp
+from config import config
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+from dotenv import load_dotenv
 
 
 def create_app(config_name='development'):
     """Application factory"""
     app = Flask(__name__)
-    
-    # Load configuration
-    if config_name == 'development':
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///streaks.db"
-    
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    # Load configurations from the .env file
+    load_dotenv()
+
+    app.config.from_object(config[config_name])
 
     # Enable foreign key support for SQLite
     if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
@@ -25,10 +26,12 @@ def create_app(config_name='development'):
 
     # Initialize extensions
     db.init_app(app)
-
+    init_oauth(app)
+    
     # Register blueprints
     app.register_blueprint(task_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(auth_bp)
 
     # Create tables
     with app.app_context():
