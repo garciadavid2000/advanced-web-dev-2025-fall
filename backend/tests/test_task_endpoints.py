@@ -257,7 +257,7 @@ class TestTaskEndpoints:
         assert data['title'] == 'New Title'
         
         with app.app_context():
-            task = Task.query.get(task_id)
+            task = db.session.get(Task, task_id)
             assert task.title == 'New Title'
     
     
@@ -320,7 +320,7 @@ class TestTaskEndpoints:
         assert response.status_code == 200
         
         with app.app_context():
-            task = Task.query.get(task_id)
+            task = db.session.get(Task, task_id)
             assert task is None
     
     
@@ -439,7 +439,7 @@ class TestTaskEndpoints:
         
         with app.app_context():
             # Get the updated occurrence to verify it was modified
-            occ = TaskOccurrences.query.get(occurrence_id)
+            occ = db.session.get(TaskOccurrences, occurrence_id)
             # Next due date should be updated to a future date
             assert occ.next_due_at > datetime.now()
     
@@ -470,7 +470,7 @@ class TestTaskEndpoints:
         assert response.status_code == 200
         
         with app.app_context():
-            task = Task.query.get(task_id)
+            task = db.session.get(Task, task_id)
             # Streak should increment by 1
             assert task.streak == 6
     
@@ -501,7 +501,7 @@ class TestTaskEndpoints:
         assert response.status_code == 200
         
         with app.app_context():
-            task = Task.query.get(task_id)
+            task = db.session.get(Task, task_id)
             # Streak should reset to 1
             assert task.streak == 1
     
