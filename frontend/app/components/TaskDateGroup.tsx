@@ -35,10 +35,8 @@ export default function TaskDateGroup({
 }: TaskDateGroupProps) {
   return (
     <div className="mb-6">
-      {/* Date Header */}
       <h2 className="text-xl font-bold text-blue-600 mb-4">{formatDate(date)}</h2>
 
-      {/* Task Cards */}
       <div className="space-y-3">
         {tasks.map((task) => (
           <TaskCard

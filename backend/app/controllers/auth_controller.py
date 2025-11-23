@@ -16,7 +16,7 @@ def google_callback():
     google = oauth.create_client("google")
     user = AuthService.handle_google_callback(google)
     create_session(user)
-    return redirect("dashboard")
+    return redirect("http://localhost:3000")
 
 
 @auth_bp.route("/logout")

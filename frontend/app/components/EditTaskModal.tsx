@@ -163,7 +163,6 @@ export default function EditTaskModal({
       }
     >
       <div className="space-y-4">
-        {/* Title Input */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Task Title
@@ -179,7 +178,6 @@ export default function EditTaskModal({
           />
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
             {error}

@@ -140,13 +140,10 @@ export default function MainPage() {
   // Main page layout
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
       <Sidebar userName={user.name} onNewTask={handleNewTask} />
 
-      {/* Main Content */}
       <main className="flex-1 overflow-auto">
         <div className="p-8">
-          {/* Tasks List */}
           {tasks && Object.keys(tasks).length > 0 ? (
             <div>
               {Object.entries(tasks).map(([date, tasksOnDate]) => (
@@ -172,7 +169,6 @@ export default function MainPage() {
         </div>
       </main>
 
-      {/* Modals */}
       {user && (
         <>
           <NewTaskModal

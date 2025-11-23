@@ -1,7 +1,23 @@
-from flask import request, jsonify
+from flask import request, jsonify, session
 from app.controllers import user_bp
 from app.services.user_service import UserService
 from app.schemas import user_schema
+
+
+@user_bp.route('/current', methods=['GET'])
+def get_current_user():
+    """Get the currently authenticated user from session"""
+    try:
+        user_id = session.get("user_id")
+        if not user_id:
+            return {"error": "Not authenticated"}, 401
+        
+        user = UserService.get_user(user_id)
+        if user:
+            return user_schema.dump(user), 200
+        return {"error": "User not found"}, 404
+    except Exception as e:
+        return {"error": str(e)}, 400
 
 
 @user_bp.route('', methods=['POST'])
