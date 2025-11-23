@@ -12,7 +12,7 @@ class Config:
 class DevelopmentConfig(Config):
     """Development configuration"""
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///streaks.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///streaks.db'
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
@@ -26,7 +26,11 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     """Production configuration"""
+    DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL')
+    SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
+    GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
 
 
 config = {

@@ -208,3 +208,4 @@ __marimo__/
 
 # MISC
 old/
+.env.docker
