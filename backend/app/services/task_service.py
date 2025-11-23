@@ -98,7 +98,7 @@ class TaskService:
     @staticmethod
     def get_task(task_id):
         """Get a task by ID"""
-        return Task.query.get(task_id)
+        return db.session.get(Task, task_id)
 
     @staticmethod
     def get_user_tasks(user_id):
@@ -142,7 +142,7 @@ class TaskService:
     @staticmethod
     def update_task_name(task_id, new_title):
         """Update the title of a task"""
-        task = Task.query.get(task_id)
+        task = db.session.get(Task, task_id)
         if task:
             task.title = new_title
             db.session.commit()
@@ -152,7 +152,7 @@ class TaskService:
     @staticmethod
     def delete_task(task_id):
         """Delete a task and all its occurrences"""
-        task = Task.query.get(task_id)
+        task = db.session.get(Task, task_id)
         if task:
             db.session.delete(task)
             db.session.commit()
@@ -163,13 +163,13 @@ class TaskService:
     def complete_task(occurrence_id):
         """Mark a task as completed and create next occurrence
         """
-        occurrence = TaskOccurrences.query.get(occurrence_id)
+        occurrence = db.session.get(TaskOccurrences, occurrence_id)
         if not occurrence:
             return None # TODO: make proper response for this
 
         task_id = occurrence.task_id
 
-        task = Task.query.get(task_id)
+        task = db.session.get(Task, task_id)
         if not task:
             return None
             
