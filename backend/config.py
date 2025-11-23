@@ -22,6 +22,9 @@ class TestingConfig(Config):
     """Testing configuration"""
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SECRET_KEY = 'test-secret-key'
+    GOOGLE_CLIENT_ID = 'test-client-id'
+    GOOGLE_CLIENT_SECRET = 'test-client-secret'
 
 
 class ProductionConfig(Config):
