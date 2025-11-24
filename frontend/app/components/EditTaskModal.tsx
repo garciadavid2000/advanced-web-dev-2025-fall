@@ -135,34 +135,37 @@ export default function EditTaskModal({
       title="Edit Task"
       onClose={handleClose}
       footer={
-        <div className="flex gap-3 justify-between">
+        <div className="flex gap-3 justify-between items-center">
           <button
             onClick={handleDelete}
             disabled={deleting || submitting}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+            className="px-4 py-2.5 text-red-600 font-medium rounded-lg hover:bg-red-50 disabled:opacity-50 flex items-center gap-2"
           >
-            {deleting ? 'Deleting...' : 'Delete Task'}
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            {deleting ? 'Deleting...' : 'Delete'}
           </button>
           <div className="flex gap-3">
             <button
               onClick={handleClose}
               disabled={submitting || deleting}
-              className="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+              className="px-5 py-2.5 text-gray-600 font-medium rounded-lg hover:bg-gray-100 disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={submitting || isLoading || deleting || title.trim() === currentTitle.trim()}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              className="px-5 py-2.5 bg-[#D97757] text-white font-medium rounded-lg hover:bg-[#C4684A] disabled:opacity-50 shadow-sm"
             >
-              {submitting ? 'Updating...' : 'Update Task'}
+              {submitting ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </div>
       }
     >
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Task Title
@@ -174,12 +177,15 @@ export default function EditTaskModal({
             placeholder="Task title"
             disabled={submitting || deleting}
             autoFocus
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D97757]/30 focus:border-[#D97757] focus:bg-white disabled:bg-gray-100 placeholder:text-gray-400"
           />
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+          <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm flex items-center gap-2">
+            <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
             {error}
           </div>
         )}

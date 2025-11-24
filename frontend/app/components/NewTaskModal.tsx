@@ -105,25 +105,25 @@ export default function NewTaskModal({
       title="Create New Task"
       onClose={handleClose}
       footer={
-        <div className="flex gap-3">
+        <div className="flex gap-3 justify-end">
           <button
             onClick={handleClose}
             disabled={submitting}
-            className="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+            className="px-5 py-2.5 text-gray-600 font-medium rounded-lg hover:bg-gray-100 disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={submitting || isLoading}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            className="px-5 py-2.5 bg-[#D97757] text-white font-medium rounded-lg hover:bg-[#C4684A] disabled:opacity-50 shadow-sm"
           >
             {submitting ? 'Creating...' : 'Create Task'}
           </button>
         </div>
       }
     >
-      <div className="space-y-4">
+      <div className="space-y-5">
         {/* Title Input */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -135,14 +135,14 @@ export default function NewTaskModal({
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g., Go to gym"
             disabled={submitting}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D97757]/30 focus:border-[#D97757] focus:bg-white disabled:bg-gray-100 placeholder:text-gray-400"
           />
         </div>
 
         {/* Frequency Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Frequency
+            Repeat on
           </label>
           <div className="grid grid-cols-7 gap-2">
             {DAYS_OF_WEEK.map((day) => (
@@ -150,10 +150,10 @@ export default function NewTaskModal({
                 key={day.value}
                 onClick={() => handleDayToggle(day.value)}
                 disabled={submitting}
-                className={`py-2 px-1 rounded font-medium text-sm transition duration-200 disabled:opacity-50 ${
+                className={`py-2.5 px-1 rounded-lg font-medium text-sm disabled:opacity-50 ${
                   selectedDays.includes(day.value)
-                    ? 'bg-blue-600 text-white border-2 border-blue-600'
-                    : 'bg-gray-100 text-gray-700 border-2 border-gray-300 hover:border-blue-400'
+                    ? 'bg-[#D97757] text-white shadow-sm'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 {day.label}
@@ -164,7 +164,10 @@ export default function NewTaskModal({
 
         {/* Error Message */}
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+          <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm flex items-center gap-2">
+            <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
             {error}
           </div>
         )}
