@@ -1,6 +1,6 @@
 'use client';
 
-import { TaskOccurrence } from '@/lib/api';
+import { TaskOccurrence } from '@/apis/api';
 
 interface TaskCardProps {
   task: TaskOccurrence;

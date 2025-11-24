@@ -7,14 +7,14 @@ interface SidebarProps {
 
 export default function Sidebar({ userName, onNewTask }: SidebarProps) {
   return (
-    <aside className="w-64 bg-red-600 text-white p-6 flex flex-col h-screen">
+    <aside className="w-64 bg-gray-800 text-gray-100 p-6 flex flex-col h-screen">
       <div className="mb-8">
         <h2 className="text-2xl font-bold">{userName}</h2>
       </div>
 
       <button
         onClick={onNewTask}
-        className="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-3 px-4 rounded border-2 border-red-500 transition duration-200"
+        className="w-full bg-gray-600 hover:bg-gray-700 text-gray-100 font-bold py-3 px-4 rounded border-2 border-gray-400 transition duration-200"
       >
         New Task
       </button>

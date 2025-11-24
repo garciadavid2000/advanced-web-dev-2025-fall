@@ -1,7 +1,7 @@
 'use client';
 
 import TaskCard from './TaskCard';
-import { TaskOccurrence, TasksByDate, canCompleteTask } from '@/lib/api';
+import { TaskOccurrence, TasksByDate, canCompleteTask } from '@/apis/api';
 
 interface TaskDateGroupProps {
   date: string;

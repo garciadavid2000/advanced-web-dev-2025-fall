@@ -12,7 +12,7 @@ import {
   completeTask,
   User,
   TasksByDate,
-} from '@/lib/api';
+} from '@/apis/api';
 
 export default function MainPage() {
   const router = useRouter();
