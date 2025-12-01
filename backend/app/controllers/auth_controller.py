@@ -1,3 +1,4 @@
+import os
 from flask import redirect, request
 from app.controllers import auth_bp
 from app.services.auth_service import AuthService
@@ -16,7 +17,8 @@ def google_callback():
     google = oauth.create_client("google")
     user = AuthService.handle_google_callback(google)
     create_session(user)
-    return redirect("http://localhost:3000")
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+    return redirect(frontend_url)
 
 
 @auth_bp.route("/logout")

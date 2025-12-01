@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Modal from './Modal';
+import { API_BASE_URL } from '../../apis/api';
 
 interface EditTaskModalProps {
   isOpen: boolean;
@@ -56,7 +57,7 @@ export default function EditTaskModal({
       setSubmitting(true);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/tasks/${taskId}`,
+        `${API_BASE_URL}/tasks/${taskId}`,
         {
           method: 'PUT',
           headers: {
@@ -107,7 +108,7 @@ export default function EditTaskModal({
       setError(null);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/tasks/${taskId}`,
+        `${API_BASE_URL}/tasks/${taskId}`,
         {
           method: 'DELETE',
           credentials: 'include',
