@@ -3,7 +3,7 @@
 import { TaskOccurrence } from '@/lib/api';
 
 interface TaskCardProps {
-  task: TaskOccurrence;
+  task: TaskOccurrence & { category?: string };
   isCompleteDisabled: boolean;
   onComplete: () => void;
   onEdit: (taskId: number, currentTitle: string) => void;
@@ -29,9 +29,16 @@ export default function TaskCard({
         className="flex-1 cursor-pointer"
         onClick={() => onEdit(task.task_id, task.title)}
       >
-        <h3 className="text-base font-medium text-gray-900 group-hover:text-[#D97757]">
-          {task.title}
-        </h3>
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="text-base font-medium text-gray-900 group-hover:text-[#D97757]">
+            {task.title}
+          </h3>
+          {task.category && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+              {task.category}
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-1">
           <span className="inline-flex items-center gap-1 text-sm text-gray-500">
             <svg className="w-4 h-4 text-[#D97757]" fill="currentColor" viewBox="0 0 20 20">

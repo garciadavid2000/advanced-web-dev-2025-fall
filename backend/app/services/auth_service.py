@@ -1,5 +1,6 @@
 from flask import url_for
 from app.services.user_service import UserService
+from datetime import datetime, timedelta
 
 
 class AuthService:
@@ -25,5 +26,16 @@ class AuthService:
             email=email,
             name=name
         )
+
+        # Store OAuth tokens for calendar integration
+        if token:
+            user.access_token = token.get("access_token")
+            user.refresh_token = token.get("refresh_token")
+            
+            # Calculate token expiry (typically expires_in is in seconds)
+            expires_in = token.get("expires_in", 3600)
+            user.token_expiry = datetime.now() + timedelta(seconds=expires_in)
+            
+            UserService.update_user_tokens(user)
 
         return user
