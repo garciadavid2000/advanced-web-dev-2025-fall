@@ -107,6 +107,9 @@ export function getEarliestDueDate(tasks: TasksByDate, taskId: number): string |
 /**
  * Check if a task occurrence can be completed (is the earliest occurrence of that task)
  */
+/**
+ * Check if a task occurrence can be completed (is the earliest occurrence of that task)
+ */
 export function canCompleteTask(
   tasks: TasksByDate,
   taskId: number,
@@ -114,4 +117,34 @@ export function canCompleteTask(
 ): boolean {
   const earliestDate = getEarliestDueDate(tasks, taskId);
   return earliestDate === currentDate;
+}
+
+/**
+ * Export all tasks to Google Calendar
+ */
+export async function exportToCalendar(): Promise<{
+  message: string;
+  success: number;
+  failed: number;
+  errors: Array<{ task: string; date: string; error: string }>;
+  event_ids: string[];
+}> {
+  const response = await fetch(`${API_BASE_URL}/auth/calendar/export`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (response.status === 401) {
+    throw new UnauthorizedError('Not authenticated');
+  }
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to export tasks to calendar');
+  }
+
+  return response.json();
 }

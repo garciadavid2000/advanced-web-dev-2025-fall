@@ -113,3 +113,10 @@ class UserService:
     def get_all_users():
         """Get all users"""
         return User.query.all()
+
+    @staticmethod
+    def update_user_tokens(user):
+        """Update OAuth tokens for a user (called after OAuth callback)"""
+        db.session.merge(user)
+        db.session.commit()
+        return user
