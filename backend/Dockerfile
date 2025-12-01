@@ -18,4 +18,5 @@ COPY . .
 
 # Command to run the application
 # CMD ["python", "run.py"]
+
 CMD ["sh", "-c", "if [ \"$FLASK_ENV\" = \"production\" ]; then gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 4 run:app; else python run.py; fi"]
