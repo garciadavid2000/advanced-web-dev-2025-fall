@@ -9,7 +9,9 @@ from sqlalchemy.engine import Engine
 from dotenv import load_dotenv
 
 
-def create_app(config_name='development'):
+def create_app(config_name=None):
+    if config_name is None:
+        config_name = os.environ.get('FLASK_ENV', 'development')
     """Application factory"""
     app = Flask(__name__)
 
@@ -39,8 +41,23 @@ def create_app(config_name='development'):
     app.register_blueprint(user_bp)
     app.register_blueprint(auth_bp)
 
-    # Create tables
+    # Create tables with retry logic
     with app.app_context():
-        db.create_all()
+        import time
+        max_retries = 30
+        for attempt in range(max_retries):
+            try:
+                db.create_all()
+                break
+            except Exception as e:
+                if "already exists" in str(e):
+                    app.logger.info("Tables already exist, skipping creation.")
+                    break
+                if attempt < max_retries - 1:
+                    app.logger.warning(f"Database connection failed (attempt {attempt + 1}/{max_retries}): {e}")
+                    time.sleep(1)
+                else:
+                    app.logger.error(f"Failed to connect to database after {max_retries} attempts")
+                    raise
 
     return app
