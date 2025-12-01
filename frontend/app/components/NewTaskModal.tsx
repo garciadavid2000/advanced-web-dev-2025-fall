@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Modal from './Modal';
+import { API_BASE_URL } from '../../apis/api';
 
 interface NewTaskModalProps {
   isOpen: boolean;
@@ -71,7 +72,7 @@ export default function NewTaskModal({
       console.log(category)
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/tasks`,
+        `${API_BASE_URL}/tasks`,
         {
           method: 'POST',
           headers: {
@@ -166,11 +167,10 @@ export default function NewTaskModal({
                 key={day.value}
                 onClick={() => handleDayToggle(day.value)}
                 disabled={submitting}
-                className={`py-2.5 px-1 rounded-lg font-medium text-sm disabled:opacity-50 ${
-                  selectedDays.includes(day.value)
-                    ? 'bg-[#D97757] text-white shadow-sm'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                className={`py-2.5 px-1 rounded-lg font-medium text-sm disabled:opacity-50 ${selectedDays.includes(day.value)
+                  ? 'bg-[#D97757] text-white shadow-sm'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
               >
                 {day.label}
               </button>

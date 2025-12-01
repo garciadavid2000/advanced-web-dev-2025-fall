@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from app.extensions import db, oauth, init_oauth
@@ -18,7 +19,8 @@ def create_app(config_name='development'):
     app.config.from_object(config[config_name])
 
     # Enable CORS with credentials support
-    CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:5000"], "allow_headers": ["Content-Type"], "supports_credentials": True}})
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+    CORS(app, resources={r"/*": {"origins": [frontend_url, "http://localhost:3000", "http://localhost:5000"], "allow_headers": ["Content-Type"], "supports_credentials": True}})
 
     # Enable foreign key support for SQLite
     if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
