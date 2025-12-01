@@ -30,7 +30,11 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL')
+    # Handle Railway's DATABASE_URL which uses mysql:// but we need mysql+mysqlconnector://
+    uri = os.environ.get('DATABASE_URL') or os.environ.get('DEV_DATABASE_URL')
+    if uri and uri.startswith('mysql://'):
+        uri = uri.replace('mysql://', 'mysql+mysqlconnector://', 1)
+    SQLALCHEMY_DATABASE_URI = uri
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
