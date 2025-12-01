@@ -42,6 +42,9 @@ class ProductionConfig(Config):
     # Session configuration for cross-site requests
     SESSION_COOKIE_SAMESITE = 'None'
     SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_PATH = '/'
+    SESSION_COOKIE_DOMAIN = None  # Allow host-only cookie for Railway domain
+    SESSION_COOKIE_HTTPONLY = True
 
 config = {
     'development': DevelopmentConfig,
