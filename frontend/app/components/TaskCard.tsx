@@ -1,6 +1,6 @@
 'use client';
 
-import { TaskOccurrence } from '@/lib/api';
+import { TaskOccurrence } from '@/apis/api';
 
 interface TaskCardProps {
   task: TaskOccurrence;
@@ -45,11 +45,10 @@ export default function TaskCard({
       <button
         onClick={handleClick}
         disabled={isCompleteDisabled || isLoading}
-        className={`ml-4 w-11 h-11 rounded-full flex items-center justify-center ${
-          isCompleteDisabled || isLoading
+        className={`ml-4 w-11 h-11 rounded-full flex items-center justify-center ${isCompleteDisabled || isLoading
             ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
             : 'bg-[#D97757]/10 text-[#D97757] hover:bg-[#D97757] hover:text-white cursor-pointer'
-        }`}
+          }`}
         title={isCompleteDisabled ? 'Can only complete the next upcoming task' : 'Mark as complete'}
         aria-label={`Complete ${task.title}`}
       >
