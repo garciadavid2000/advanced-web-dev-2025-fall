@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_cors import CORS
 from app.extensions import db, oauth, init_oauth
 from app.controllers import task_bp, user_bp, auth_bp
@@ -20,6 +21,9 @@ def create_app(config_name=None):
 
     app.config.from_object(config[config_name])
 
+    # Apply ProxyFix to handle headers from Railway's load balancer
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    
     # Enable CORS with credentials support
     frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
     CORS(app, resources={r"/*": {"origins": [frontend_url, "http://localhost:3000", "http://localhost:5000"], "allow_headers": ["Content-Type"], "supports_credentials": True}})
