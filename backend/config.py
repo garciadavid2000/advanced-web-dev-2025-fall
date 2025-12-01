@@ -38,7 +38,10 @@ class ProductionConfig(Config):
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
-
+   
+    # Session configuration for cross-site requests
+    SESSION_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_SECURE = True
 
 config = {
     'development': DevelopmentConfig,
