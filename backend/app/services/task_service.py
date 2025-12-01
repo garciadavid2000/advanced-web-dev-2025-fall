@@ -58,13 +58,14 @@ class TaskService:
 
 
     @staticmethod
-    def create_task(user_id, title, frequency):
+    def create_task(user_id, title, frequency, category='General'):
         """Create a new task with one or more frequencies
         
         Args:
             user_id: User ID
             title: Task title
             frequency: Single day string (e.g., 'mon') or list of days (e.g., ['mon', 'wed', 'fri'])
+            category: Task category (default: 'General')
         """
         # Convert single frequency to list for uniform processing
         frequencies = frequency if isinstance(frequency, list) else [frequency]
@@ -75,9 +76,11 @@ class TaskService:
                 raise ValueError(f"Invalid frequency: {freq}. Must be one of: {', '.join(TaskService.DAY_MAPPING.keys())}")
         
         # Create the main task
+        print(category)
         task = Task(
             user_id=user_id,
             title=title,
+            category=category,
         )
         db.session.add(task)
         db.session.flush()  # Get the task ID without committing
@@ -116,12 +119,13 @@ class TaskService:
         occurrences_with_tasks = db.session.query(
             TaskOccurrences,
             Task.title,
-            Task.streak
+            Task.streak,
+            Task.category
         ).join(Task).filter(Task.user_id == user_id).all()
         
         # Group by due date
         grouped = defaultdict(list)
-        for occurrence, task_title, streak in occurrences_with_tasks:
+        for occurrence, task_title, streak, category in occurrences_with_tasks:
             due_date = occurrence.next_due_at.date()
             # Create a dictionary with occurrence data and task info
             occurrence_data = {
@@ -130,7 +134,8 @@ class TaskService:
                 'frequency': occurrence.frequency,
                 'next_due_at': occurrence.next_due_at,
                 'title': task_title,
-                'streak': streak
+                'streak': streak,
+                'category': category
             }
             grouped[due_date].append(occurrence_data)
         

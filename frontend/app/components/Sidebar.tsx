@@ -1,11 +1,40 @@
 'use client';
 
+import { useState } from 'react';
+import { exportToCalendar } from '@/apis/api';
+
 interface SidebarProps {
   userName: string;
   onNewTask: () => void;
 }
 
 export default function Sidebar({ userName, onNewTask }: SidebarProps) {
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportStatus, setExportStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [exportMessage, setExportMessage] = useState('');
+
+  const handleExportToCalendar = async () => {
+    setIsExporting(true);
+    setExportStatus('idle');
+    
+    try {
+      const result = await exportToCalendar();
+      setExportStatus('success');
+      setExportMessage(`${result.success} tasks exported${result.failed > 0 ? `, ${result.failed} failed` : ''}`);
+      
+      // Clear message after 5 seconds
+      setTimeout(() => setExportStatus('idle'), 5000);
+    } catch (error) {
+      setExportStatus('error');
+      setExportMessage(error instanceof Error ? error.message : 'Failed to export tasks');
+      
+      // Clear message after 5 seconds
+      setTimeout(() => setExportStatus('idle'), 5000);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <aside className="w-72 bg-gray-900 text-white p-6 flex flex-col h-screen shadow-xl">
       {/* Logo/Brand */}
@@ -29,13 +58,53 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
       {/* New Task Button */}
       <button
         onClick={onNewTask}
-        className="w-full bg-[#D97757] hover:bg-[#C4684A] text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-[#D97757]/20 flex items-center justify-center gap-2"
+        className="w-full bg-[#D97757] hover:bg-[#C4684A] text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-[#D97757]/20 flex items-center justify-center gap-2 transition-all duration-200"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
         New Task
       </button>
+
+      {/* Export to Calendar Button */}
+      <button
+        onClick={handleExportToCalendar}
+        disabled={isExporting}
+        className={`w-full mt-3 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 ${
+          isExporting
+            ? 'bg-gray-700 text-gray-300 cursor-not-allowed'
+            : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20'
+        }`}
+      >
+        {isExporting ? (
+          <>
+            <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Exporting...
+          </>
+        ) : (
+          <>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Export to Calendar
+          </>
+        )}
+      </button>
+
+      {/* Export Status Message */}
+      {exportStatus !== 'idle' && (
+        <div
+          className={`mt-3 p-3 rounded-lg text-sm font-medium animate-fade-in ${
+            exportStatus === 'success'
+              ? 'bg-green-900/30 text-green-300 border border-green-700/50'
+              : 'bg-red-900/30 text-red-300 border border-red-700/50'
+          }`}
+        >
+          {exportMessage}
+        </div>
+      )}
 
       {/* Spacer */}
       <div className="flex-1 mt-8"></div>
@@ -47,3 +116,4 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
     </aside>
   );
 }
+

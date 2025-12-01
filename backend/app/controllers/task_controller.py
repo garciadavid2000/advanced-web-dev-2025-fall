@@ -12,7 +12,8 @@ def create_task():
         task = TaskService.create_task(
             user_id=data.get('user_id'),
             title=data.get('title'),
-            frequency=data.get('frequency')
+            frequency=data.get('frequency'),
+            category=data.get('category')
         )
         return task_schema.dump(task), 201
     except ValueError as e:

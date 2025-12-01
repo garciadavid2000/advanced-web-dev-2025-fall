@@ -21,6 +21,17 @@ const DAYS_OF_WEEK = [
   { label: 'Sun', value: 'sun' },
 ];
 
+const TASK_CATEGORIES = [
+  'General',
+  'Work',
+  'Personal',
+  'Health',
+  'Finance',
+  'Travel',
+  'Entertainment',
+  'Family',
+];
+
 export default function NewTaskModal({
   isOpen,
   onClose,
@@ -30,6 +41,7 @@ export default function NewTaskModal({
 }: NewTaskModalProps) {
   const [title, setTitle] = useState('');
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [category, setCategory] = useState('General');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -56,6 +68,8 @@ export default function NewTaskModal({
     try {
       setSubmitting(true);
 
+      console.log(category)
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/tasks`,
         {
@@ -68,6 +82,7 @@ export default function NewTaskModal({
             user_id: userId,
             title: title.trim(),
             frequency: selectedDays,
+            category: category,
           }),
         }
       );
@@ -94,6 +109,7 @@ export default function NewTaskModal({
     if (!submitting) {
       setTitle('');
       setSelectedDays([]);
+      setCategory('General');
       setError(null);
       onClose();
     }
@@ -160,6 +176,25 @@ export default function NewTaskModal({
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Category Selection */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Category
+          </label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            disabled={submitting}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D97757]/30 focus:border-[#D97757] focus:bg-white disabled:bg-gray-100"
+          >
+            {TASK_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Error Message */}

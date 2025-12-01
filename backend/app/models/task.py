@@ -25,6 +25,10 @@ class Task(db.Model):
 
     streak = db.Column(db.Integer, nullable=False, default=0)
 
+    category = db.Column(db.String(50), nullable=False, default='General')
+
+    google_event_id = db.Column(db.String(255), nullable=True)
+
     # relationships
     user = db.relationship("User", back_populates="tasks")
 
