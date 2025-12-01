@@ -209,3 +209,4 @@ __marimo__/
 # MISC
 old/
 .env.docker
+build_log.txt
