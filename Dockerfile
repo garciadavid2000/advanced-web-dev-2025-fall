@@ -1,7 +1,7 @@
 # ============ STAGE 1: Build Frontend ============
 FROM node:20-alpine AS frontend-builder
 
-WORKDIR /app/frontend
+WORKDIR /web-dev-project/frontend
 
 # Copy package files for dependency installation
 COPY frontend/package.json frontend/package-lock.json ./
@@ -25,7 +25,7 @@ RUN test -f out/index.html || (echo "Frontend build failed: 'index.html' not fou
 FROM python:3.11-slim
 
 # Set the working directory in the container
-WORKDIR /app
+WORKDIR /inner-app
 
 # Install system dependencies required for mysql-connector-python
 RUN apt-get update && apt-get install -y default-libmysqlclient-dev build-essential && rm -rf /var/lib/apt/lists/*
@@ -42,7 +42,10 @@ COPY backend/ .
 # Copy the compiled frontend from Stage 1 into backend's static directory
 # The 'out' directory contains static-exported Next.js files ready to be served
 RUN mkdir -p static
-COPY --from=frontend-builder /app/frontend/out ./static/frontend
+COPY --from=frontend-builder /web-dev-project/frontend/out ./static/frontend
+
+# Validate frontend files are present
+RUN test -f static/frontend/index.html || (echo "Frontend deployment failed: 'index.html' not found in static directory" && exit 1)
 
 # Command to run the application
 CMD ["sh", "-c", "if [ \"$FLASK_ENV\" = \"production\" ]; then gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 4 run:app; else python run.py; fi"]

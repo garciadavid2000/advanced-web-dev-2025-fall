@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, send_from_directory, send_file
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_cors import CORS
 from app.extensions import db, oauth, init_oauth
@@ -10,7 +10,7 @@ from sqlalchemy.engine import Engine
 from dotenv import load_dotenv
 
 
-def create_app(config_name=None):
+def create_app(config_name='development'):
     if config_name is None:
         config_name = os.environ.get('FLASK_ENV', 'development')
     """Application factory"""
@@ -21,12 +21,16 @@ def create_app(config_name=None):
 
     app.config.from_object(config[config_name])
 
+    print(app.config['SQLALCHEMY_DATABASE_URI'])
+
     # Apply ProxyFix to handle headers from Railway's load balancer
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     
-    # Enable CORS with credentials support
-    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
-    CORS(app, resources={r"/*": {"origins": [frontend_url, "http://localhost:3000", "http://localhost:5000"], "allow_headers": ["Content-Type"], "supports_credentials": True}})
+    # Enable CORS only if running with separate frontend (for development)
+    # In monolith/production, frontend and backend are on same origin, so CORS not needed
+    if os.environ.get('SEPARATE_FRONTEND', 'false').lower() == 'true':
+        frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+        CORS(app, resources={r"/*": {"origins": [frontend_url, "http://localhost:3000"], "allow_headers": ["Content-Type"], "supports_credentials": True}})
 
     # Enable foreign key support for SQLite
     if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
@@ -40,10 +44,41 @@ def create_app(config_name=None):
     db.init_app(app)
     init_oauth(app)
     
-    # Register blueprints
+    # Register API blueprints FIRST so they take priority over frontend catch-all routes
     app.register_blueprint(task_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(auth_bp)
+
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    FRONTEND_DIR = os.path.join(BASE_DIR, '..', 'static', 'frontend')
+    print(FRONTEND_DIR)
+
+    # Serve frontend static assets and handle SPA routing
+    @app.route('/')
+    def index():
+        """Serve the Next.js frontend index"""
+        try:
+            return send_from_directory(FRONTEND_DIR, 'index.html')
+        except FileNotFoundError:
+            return {'error': 'Frontend not built'}, 404
+
+    @app.route('/<path:path>')
+    def serve_frontend(path):
+        """Serve static assets and fallback to index.html for SPA routing"""
+        # Don't intercept actual API routes (they should be handled by blueprints above)
+        # This is a safety check in case requests reach here
+        if path.startswith('api/'):
+            return {'error': 'Not found'}, 404
+        
+        # Serve static files (.js, .css, images, etc.)
+        try:
+            return send_from_directory(FRONTEND_DIR, path)
+        except FileNotFoundError:
+            # Fallback to index.html for client-side routing
+            try:
+                return send_from_directory(FRONTEND_DIR, 'index.html')
+            except FileNotFoundError:
+                return {'error': 'Frontend not found'}, 404
 
     # Create tables with retry logic
     with app.app_context():
