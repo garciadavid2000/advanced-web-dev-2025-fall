@@ -1,8 +1,29 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { API_BASE_URL } from '../../apis/api';
 
 export default function SignInPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if token is in URL (from deployment callback)
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (token) {
+      // Save token to localStorage
+      localStorage.setItem('authToken', token);
+      
+      // Remove token from URL to clean up the browser history
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      // Redirect to home page
+      router.push('/');
+    }
+  }, [router]);
+
   const handleSignIn = () => {
     // Redirect to backend login endpoint
     window.location.href = `${API_BASE_URL}/auth/login`;

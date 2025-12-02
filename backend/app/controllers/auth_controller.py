@@ -5,7 +5,8 @@ from app.services.auth_service import AuthService
 from app.services.calendar_service import CalendarService
 from app.services.task_service import TaskService
 from app.extensions import oauth
-from app.utils.session_manager import create_session, clear_session, get_current_user
+from app.utils.session_manager import create_session, clear_session, get_current_user, create_access_token_for_user
+from app.utils.jwt_required import get_current_user_from_request
 
 
 @auth_bp.route('/login')
@@ -18,9 +19,25 @@ def login():
 def google_callback():
     google = oauth.create_client("google")
     user = AuthService.handle_google_callback(google)
+    
+    # Create session for localhost development
     create_session(user)
+    
+    # Create JWT token for deployment scenarios
+    access_token = create_access_token_for_user(user)
+    
+    # Determine frontend URL
     frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
-    return redirect(frontend_url)
+    
+    # Check if this is a localhost request (for development)
+    # If running on localhost, redirect with session cookie
+    # If deployed, redirect with token in URL fragment
+    if 'localhost' in request.host or '127.0.0.1' in request.host:
+        # Development: use cookies
+        return redirect(frontend_url)
+    else:
+        # Production: redirect with token in URL fragment for secure handling
+        return redirect(f"{frontend_url}?token={access_token}")
 
 
 @auth_bp.route("/logout")
@@ -33,7 +50,7 @@ def logout():
 def export_to_calendar():
     """Export all user tasks to Google Calendar"""
     try:
-        user = get_current_user()
+        user = get_current_user_from_request()
         if not user:
             return jsonify({"error": "User not authenticated"}), 401
         
