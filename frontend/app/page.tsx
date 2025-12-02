@@ -51,6 +51,7 @@ export default function MainPage() {
           if (process.env.NEXT_PUBLIC_TEST_MODE !== 'true') {
             router.push('/signin');
           } else {
+            console.log("TEST MODE ACTIVATED!!")
             setError('Test mode: Authentication failed. Ensure backend test-login endpoint is available.');
           }
         } else {
