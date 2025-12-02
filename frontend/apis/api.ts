@@ -1,29 +1,5 @@
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
-/**
- * Get the stored JWT token from localStorage
- */
-function getAuthToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('authToken');
-}
-
-/**
- * Create headers with JWT token in Authorization header if available
- */
-function getAuthHeaders(): HeadersInit {
-  const token = getAuthToken();
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-  };
-  
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  
-  return headers;
-}
-
 export interface User {
   id: number;
   email: string;
@@ -59,7 +35,6 @@ export class UnauthorizedError extends Error {
 export async function fetchCurrentUser(): Promise<User> {
   const response = await fetch(`${API_BASE_URL}/users/current`, {
     credentials: 'include',
-    headers: getAuthHeaders(),
   });
 
   if (response.status === 401) {
@@ -79,7 +54,6 @@ export async function fetchCurrentUser(): Promise<User> {
 export async function fetchUserTasks(userId: number): Promise<TasksByDate> {
   const response = await fetch(`${API_BASE_URL}/tasks?user_id=${userId}`, {
     credentials: 'include',
-    headers: getAuthHeaders(),
   });
 
   if (response.status === 401) {
@@ -101,7 +75,6 @@ export async function completeTask(occurrenceId: number): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/tasks/${occurrenceId}/complete`, {
     method: 'POST',
     credentials: 'include',
-    headers: getAuthHeaders(),
   });
 
   if (response.status === 401) {
@@ -134,6 +107,9 @@ export function getEarliestDueDate(tasks: TasksByDate, taskId: number): string |
 /**
  * Check if a task occurrence can be completed (is the earliest occurrence of that task)
  */
+/**
+ * Check if a task occurrence can be completed (is the earliest occurrence of that task)
+ */
 export function canCompleteTask(
   tasks: TasksByDate,
   taskId: number,
@@ -156,7 +132,9 @@ export async function exportToCalendar(): Promise<{
   const response = await fetch(`${API_BASE_URL}/auth/calendar/export`, {
     method: 'POST',
     credentials: 'include',
-    headers: getAuthHeaders(),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 
   if (response.status === 401) {
@@ -170,4 +148,3 @@ export async function exportToCalendar(): Promise<{
 
   return response.json();
 }
-

@@ -16,8 +16,6 @@ class DevelopmentConfig(Config):
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
-    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "dev-secret-key-change-in-production")
-    JWT_ACCESS_TOKEN_EXPIRES = 86400  # 24 hours
 
 
 class TestingConfig(Config):
@@ -27,8 +25,6 @@ class TestingConfig(Config):
     SECRET_KEY = 'test-secret-key'
     GOOGLE_CLIENT_ID = 'test-client-id'
     GOOGLE_CLIENT_SECRET = 'test-client-secret'
-    JWT_SECRET_KEY = 'test-jwt-secret-key'
-    JWT_ACCESS_TOKEN_EXPIRES = 86400
 
 
 class ProductionConfig(Config):
@@ -42,8 +38,6 @@ class ProductionConfig(Config):
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
-    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
-    JWT_ACCESS_TOKEN_EXPIRES = 86400
    
     # Session configuration for cross-site requests
     SESSION_COOKIE_SAMESITE = 'None'
