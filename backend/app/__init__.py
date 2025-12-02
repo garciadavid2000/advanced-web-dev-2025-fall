@@ -1,9 +1,10 @@
 import os
-from flask import Flask, send_from_directory, send_file
+from flask import Flask, send_from_directory, g
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_cors import CORS
 from app.extensions import db, oauth, init_oauth
 from app.controllers import task_bp, user_bp, auth_bp
+from app.models.user import User
 from config import config
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -20,8 +21,6 @@ def create_app(config_name='development'):
     load_dotenv()
 
     app.config.from_object(config[config_name])
-
-    print(app.config['SQLALCHEMY_DATABASE_URI'])
 
     # Apply ProxyFix to handle headers from Railway's load balancer
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -52,6 +51,11 @@ def create_app(config_name='development'):
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     FRONTEND_DIR = os.path.join(BASE_DIR, '..', 'static', 'frontend')
     print(FRONTEND_DIR)
+
+    if app.config.get("TESTING"):
+        @app.before_request
+        def fake_current_user():
+            g.current_user = User(id=1, email="test@example.com")
 
     # Serve frontend static assets and handle SPA routing
     @app.route('/')
