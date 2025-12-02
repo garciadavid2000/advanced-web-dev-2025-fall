@@ -61,6 +61,14 @@ def create_app(config_name='development'):
             return send_from_directory(FRONTEND_DIR, 'index.html')
         except FileNotFoundError:
             return {'error': 'Frontend not built'}, 404
+        
+    @app.route('/signin')
+    def signin():
+        """Serve the Next.js frontend signin"""
+        try:
+            return send_from_directory(FRONTEND_DIR, 'signin.html')
+        except FileNotFoundError:
+            return {'error': 'Frontend not built'}, 404
 
     @app.route('/<path:path>')
     def serve_frontend(path):
