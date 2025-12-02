@@ -1,5 +1,6 @@
 from flask import session
 from app.models import User
+from app.extensions import db
 
 def create_session(user):
     session["user_id"] = user.id
@@ -12,4 +13,4 @@ def get_current_user():
     user_id = session.get("user_id")
     if not user_id:
         return None
-    return User.query.get(user_id)
+    return db.session.get(User, user_id)
