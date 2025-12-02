@@ -19,7 +19,7 @@ def google_callback():
     google = oauth.create_client("google")
     user = AuthService.handle_google_callback(google)
     create_session(user)
-    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5000')
     return redirect(frontend_url)
 
 
