@@ -39,7 +39,7 @@ Then you should be able to access the project on `http://localhost:5000`!
 
 
 
-This project follows a Monolithic MVC architecture. The **Next.js** frontend does not compute any authentication and busines logic, that is all handled on the **flask** backend.
+This project follows a Monolithic MVC architecture. The **Next.js** frontend does not compute any authentication and busines logic, that is all handled on the **Flask** backend.
 
 Further to this the backend is split into four main sections.
 
@@ -113,17 +113,10 @@ Below is the schema diagram for our database as taken with dbeaver:
 Here is a brief description of what purpose each table serves:
 
 - users
-
 Contains data on uses and securely stores Google Oauth access and refresh tokens.
-
 - tasks 
-
 Contains the general task information like name, streak, and google calendar data for syncing.
-
 - task_occurrences
-
 This table was meant to clearly distinguish between tasks that are meant to be completed on more than one day in the week.
-
 - task_completions
-
 This table is meant to keep track of every single task that has been completed for metrics and debugging.
