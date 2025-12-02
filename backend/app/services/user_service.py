@@ -24,7 +24,7 @@ class UserService:
     @staticmethod
     def get_user(user_id):
         """Get a user by ID"""
-        return User.query.get(user_id)
+        return db.session.get(User, user_id)
 
     @staticmethod
     def get_user_by_email(email):
@@ -80,7 +80,7 @@ class UserService:
     @staticmethod
     def update_user(user_id, **kwargs):
         """Update user data"""
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             return None
         
@@ -103,7 +103,7 @@ class UserService:
     @staticmethod
     def delete_user(user_id):
         """Delete a user"""
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if user:
             db.session.delete(user)
             db.session.commit()
