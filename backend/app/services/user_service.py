@@ -19,6 +19,7 @@ class UserService:
         user = User(email=email, name=name)
         db.session.add(user)
         db.session.commit()
+        return user
 
     @staticmethod
     def get_user(user_id):
