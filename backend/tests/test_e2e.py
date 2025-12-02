@@ -9,7 +9,7 @@ from app import create_app
 from app.extensions import db
 
 # Configure port for the test server
-TEST_PORT = 5001
+TEST_PORT = 5000
 TEST_SERVER_URL = f'http://localhost:{TEST_PORT}'
 
 @pytest.fixture(scope='session')
@@ -48,11 +48,13 @@ def driver():
     
     driver.quit()
 
+@pytest.mark.e2e
 def test_landing_page_loads(live_server, driver):
     """Test that the landing page loads correctly."""
     driver.get(TEST_SERVER_URL)
     assert "Task Tracking" in driver.title or "Streaks" in driver.title
 
+@pytest.mark.e2e
 def test_auth_bypass_and_dashboard_access(live_server, driver):
     """Test authentication bypass and access to protected dashboard."""
     import requests
@@ -85,6 +87,7 @@ def test_auth_bypass_and_dashboard_access(live_server, driver):
     time.sleep(1) # Wait for page load
     assert "/signin" not in driver.current_url
 
+@pytest.mark.e2e
 def test_task_lifecycle(live_server, driver):
     """Test the full lifecycle of a task: Create -> Edit -> Complete -> Delete."""
     import requests
@@ -118,9 +121,9 @@ def test_task_lifecycle(live_server, driver):
         create_btn = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Create your first task')]")))
         create_btn.click()
     except:
-        # Fallback for non-empty state (if we ran tests sequentially without clearing db, but db is in-memory so it should be empty)
-        # Or if the button text is different.
-        pass
+        # Fallback for non-empty state or if empty state button is not found
+        sidebar_btn = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'New Task')]")))
+        sidebar_btn.click()
 
     # Wait for modal
     wait.until(EC.visibility_of_element_located((By.XPATH, "//h2[contains(text(), 'Create New Task')]")))
