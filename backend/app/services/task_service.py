@@ -51,7 +51,7 @@ class TaskService:
         next_due = base_date + timedelta(days=days_ahead)
 
         # Set due time to end of day
-        next_due = next_due.replace(hour=23, minute=59, second=59, microsecond=999999)
+        next_due = next_due.replace(hour=23, minute=59, second=59)
 
         return next_due
 
@@ -170,7 +170,7 @@ class TaskService:
         """
         occurrence = db.session.get(TaskOccurrences, occurrence_id)
         if not occurrence:
-            return None # TODO: make proper response for this
+            return None
 
         task_id = occurrence.task_id
 
@@ -187,7 +187,7 @@ class TaskService:
             return None
 
         if occurrence.id != current_occurrence.id:
-            return None # TODO: response "not most recent task!"
+            return None
         
         # Create completion record
         completion = TaskCompletion(task_id=task_id)

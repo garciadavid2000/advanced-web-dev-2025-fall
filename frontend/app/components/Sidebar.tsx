@@ -16,18 +16,18 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
   const handleExportToCalendar = async () => {
     setIsExporting(true);
     setExportStatus('idle');
-    
+
     try {
       const result = await exportToCalendar();
       setExportStatus('success');
       setExportMessage(`${result.success} tasks exported${result.failed > 0 ? `, ${result.failed} failed` : ''}`);
-      
+
       // Clear message after 5 seconds
       setTimeout(() => setExportStatus('idle'), 5000);
     } catch (error) {
       setExportStatus('error');
       setExportMessage(error instanceof Error ? error.message : 'Failed to export tasks');
-      
+
       // Clear message after 5 seconds
       setTimeout(() => setExportStatus('idle'), 5000);
     } finally {
@@ -70,11 +70,10 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
       <button
         onClick={handleExportToCalendar}
         disabled={isExporting}
-        className={`w-full mt-3 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 ${
-          isExporting
+        className={`w-full mt-3 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 ${isExporting
             ? 'bg-gray-700 text-gray-300 cursor-not-allowed'
             : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20'
-        }`}
+          }`}
       >
         {isExporting ? (
           <>
@@ -96,11 +95,10 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
       {/* Export Status Message */}
       {exportStatus !== 'idle' && (
         <div
-          className={`mt-3 p-3 rounded-lg text-sm font-medium animate-fade-in ${
-            exportStatus === 'success'
+          className={`mt-3 p-3 rounded-lg text-sm font-medium animate-fade-in ${exportStatus === 'success'
               ? 'bg-green-900/30 text-green-300 border border-green-700/50'
               : 'bg-red-900/30 text-red-300 border border-red-700/50'
-          }`}
+            }`}
         >
           {exportMessage}
         </div>

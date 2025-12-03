@@ -6,8 +6,6 @@ from app.models import User
 class UserService:
     """Business logic for user operations"""
 
-    # ----------------- THESE FUNCTIONS ARE TO BE OFFBOARDED -----------------
-
     @staticmethod
     def create_user(email, name=None):
         """Create a new user"""
