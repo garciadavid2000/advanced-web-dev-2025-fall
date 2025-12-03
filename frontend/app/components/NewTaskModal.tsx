@@ -55,7 +55,7 @@ export default function NewTaskModal({
   const handleSubmit = async () => {
     setError(null);
 
-
+    // Validation
     if (!title.trim()) {
       setError('Task title is required');
       return;
@@ -93,7 +93,7 @@ export default function NewTaskModal({
         throw new Error(errorData.error || 'Failed to create task');
       }
 
-
+      // Reset form
       setTitle('');
       setSelectedDays([]);
       onClose();
@@ -141,7 +141,7 @@ export default function NewTaskModal({
       }
     >
       <div className="space-y-5">
-
+        {/* Title Input */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Task Title
@@ -156,7 +156,7 @@ export default function NewTaskModal({
           />
         </div>
 
-
+        {/* Frequency Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
             Repeat on
@@ -178,7 +178,7 @@ export default function NewTaskModal({
           </div>
         </div>
 
-
+        {/* Category Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Category
@@ -197,7 +197,7 @@ export default function NewTaskModal({
           </select>
         </div>
 
-
+        {/* Error Message */}
         {error && (
           <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm flex items-center gap-2">
             <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">

@@ -29,7 +29,7 @@ you populate it you ***MUST RENAME*** it to `.env`
 **IMPORTANT:** If you are a TA or the Prof of this class, the exact .env was provided in the COMMENTS that was submitted in canvas with all the keys required.
 feel free to copy paste it into `/backend/.env.example` and then rename the file to `.env`
 
-If you have all the proper variables simply run the following command.
+If you have all the proper variables simply run the following command. Please be patient, this command can take a while to run.
 
 ```bash
 docker-compose --env-file .env.docker up --build

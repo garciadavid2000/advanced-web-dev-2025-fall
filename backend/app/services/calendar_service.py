@@ -43,13 +43,13 @@ class CalendarService:
             scopes=CalendarService.SCOPES
         )
         
-
+        # Refresh if expired
         if user.is_token_expired():
             try:
                 request = Request()
                 credentials.refresh(request)
                 
-
+                # Update user's tokens
                 user.access_token = credentials.token
                 if credentials.refresh_token:
                     user.refresh_token = credentials.refresh_token
@@ -80,7 +80,7 @@ class CalendarService:
             credentials = CalendarService.get_calendar_credentials(user)
             service = build('calendar', 'v3', credentials=credentials)
             
-
+            # Create event object
             event = {
                 'summary': title,
                 'description': description or '',
@@ -98,12 +98,12 @@ class CalendarService:
                 }
             }
             
-
+            # If due_date is just a date, format appropriately
             if isinstance(due_date, datetime.date) and not isinstance(due_date, datetime):
                 event['start'] = {'date': due_date.isoformat()}
                 event['end'] = {'date': (due_date + timedelta(days=1)).isoformat()}
             
-
+            # Insert event to calendar
             created_event = service.events().insert(
                 calendarId='primary',
                 body=event
@@ -134,7 +134,7 @@ class CalendarService:
             
             results = {'deleted': 0, 'errors': []}
             
-
+            # Get all events from primary calendar
             events_result = service.events().list(
                 calendarId='primary',
                 q='AppTask:',  # Search for events with AppTask marker
@@ -185,19 +185,19 @@ class CalendarService:
             credentials = CalendarService.get_calendar_credentials(user)
             service = build('calendar', 'v3', credentials=credentials)
             
-
+            # Step 1: Delete all existing app-created events
             delete_results = CalendarService.delete_calendar_events(user, service)
             results['deleted'] = delete_results['deleted']
             results['errors'].extend(delete_results['errors'])
             
-
+            # Step 2: Create new events from current tasks
             for date_str, tasks in tasks_by_date.items():
                 for task in tasks:
                     try:
                         # Parse date string (format: YYYY-MM-DD)
                         task_date = datetime.strptime(str(date_str), '%Y-%m-%d').date()
                         
-
+                        # Get task object to store google_event_id
                         task_obj = db.session.get(Task, task['task_id'])
                         category = task.get('category', 'General')
                         color_id = CalendarService.CATEGORY_COLORS.get(category, '0')
@@ -215,7 +215,7 @@ class CalendarService:
                             body=event
                         ).execute()
                         
-
+                        # Store event ID on task for future reference
                         if task_obj:
                             task_obj.google_event_id = created_event.get('id')
                             db.session.commit()

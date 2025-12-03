@@ -19,7 +19,7 @@ class TaskService:
     }
 
     # -- HELPER FUNCTION --
-
+    # Gets the next occurrence of FREQUENCY (mon = get next monday, tue = get next tuesday)
     @staticmethod
     def get_next_due_date(frequency, occurrence_due_date=datetime.now()):
         """Calculate the next due date based on weekly frequency rules."""
@@ -43,14 +43,14 @@ class TaskService:
 
         base_weekday = base_date.weekday()
 
-
+        # Calculate how many days until the next target weekday
         days_ahead = target_weekday - base_weekday
         if days_ahead <= 0:
-            days_ahead += 7
+            days_ahead += 7  # next week
 
         next_due = base_date + timedelta(days=days_ahead)
 
-
+        # Set due time to end of day
         next_due = next_due.replace(hour=23, minute=59, second=59, microsecond=999999)
 
         return next_due
@@ -67,15 +67,15 @@ class TaskService:
             frequency: Single day string (e.g., 'mon') or list of days (e.g., ['mon', 'wed', 'fri'])
             category: Task category (default: 'General')
         """
-
+        # Convert single frequency to list for uniform processing
         frequencies = frequency if isinstance(frequency, list) else [frequency]
         
-
+        # Validate all frequencies
         for freq in frequencies:
             if freq.lower() not in TaskService.DAY_MAPPING:
                 raise ValueError(f"Invalid frequency: {freq}. Must be one of: {', '.join(TaskService.DAY_MAPPING.keys())}")
         
-
+        # Create the main task
         print(category)
         task = Task(
             user_id=user_id,
@@ -85,7 +85,7 @@ class TaskService:
         db.session.add(task)
         db.session.flush()  # Get the task ID without committing
         
-
+        # Create occurrences for each frequency
         for freq in frequencies:
             next_due_at = TaskService.get_next_due_date(freq)
             occurrence = TaskOccurrences(
@@ -115,7 +115,7 @@ class TaskService:
             task title and streak) as values, sorted by due date
         """
         
-
+        # Query with JOIN to get occurrences with their task details
         occurrences_with_tasks = db.session.query(
             TaskOccurrences,
             Task.title,
@@ -123,11 +123,11 @@ class TaskService:
             Task.category
         ).join(Task).filter(Task.user_id == user_id).all()
         
-
+        # Group by due date
         grouped = defaultdict(list)
         for occurrence, task_title, streak, category in occurrences_with_tasks:
             due_date = occurrence.next_due_at.date()
-
+            # Create a dictionary with occurrence data and task info
             occurrence_data = {
                 'id': occurrence.id,
                 'task_id': occurrence.task_id,
@@ -139,7 +139,7 @@ class TaskService:
             }
             grouped[due_date].append(occurrence_data)
         
-
+        # Sort by due date and return as ordered dictionary
         sorted_grouped = OrderedDict(sorted(grouped.items()))
         
         return sorted_grouped
@@ -193,7 +193,7 @@ class TaskService:
         completion = TaskCompletion(task_id=task_id)
         db.session.add(completion)
         
-
+        # Check if completed before due date
         now = datetime.now()
         if now < current_occurrence.next_due_at:
             # Completed early - increment streak
@@ -202,7 +202,7 @@ class TaskService:
             # Completed on or after due date - reset streak
             task.streak = 1
         
-
+        # Create next occurrence
         next_due_at = TaskService.get_next_due_date(occurrence.frequency, occurrence.next_due_at)
 
         occurrence.next_due_at = next_due_at

@@ -28,18 +28,18 @@ export default function MainPage() {
   const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
   const [editingTaskTitle, setEditingTaskTitle] = useState('');
 
-
+  // Fetch user and tasks on mount
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-
+        // Fetch current user
         const userData = await fetchCurrentUser();
         setUser(userData);
 
-
+        // Fetch user's tasks
         const tasksData = await fetchUserTasks(userData.id);
         setTasks(tasksData);
       } catch (err) {
@@ -69,10 +69,10 @@ export default function MainPage() {
     try {
       setCompletingTaskId(occurrenceId);
 
-
+      // Call the complete task endpoint
       await completeTask(occurrenceId);
 
-
+      // Refetch tasks after completion
       if (user) {
         const updatedTasks = await fetchUserTasks(user.id);
         setTasks(updatedTasks);
@@ -90,7 +90,7 @@ export default function MainPage() {
   };
 
   const handleTaskCreated = async () => {
-
+    // Refetch tasks after creation
     if (user) {
       const updatedTasks = await fetchUserTasks(user.id);
       setTasks(updatedTasks);
@@ -104,14 +104,14 @@ export default function MainPage() {
   };
 
   const handleTaskUpdated = async () => {
-
+    // Refetch tasks after update
     if (user) {
       const updatedTasks = await fetchUserTasks(user.id);
       setTasks(updatedTasks);
     }
   };
 
-
+  // Show loading state
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#FAF9F7]">
@@ -128,7 +128,7 @@ export default function MainPage() {
     );
   }
 
-
+  // Show error state
   if (error || !user) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#FAF9F7]">
@@ -156,14 +156,14 @@ export default function MainPage() {
     );
   }
 
-
+  // Main page layout
   return (
     <div className="flex h-screen bg-[#FAF9F7]">
       <Sidebar userName={user.name} onNewTask={handleNewTask} />
 
       <main className="flex-1 overflow-auto">
         <div className="max-w-4xl mx-auto p-8">
-
+          {/* Page Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900">Your Tasks</h1>
             <p className="text-gray-500 mt-1">Stay on track with your daily habits</p>

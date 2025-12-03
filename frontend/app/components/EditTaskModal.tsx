@@ -37,7 +37,7 @@ export default function EditTaskModal({
   const handleSubmit = async () => {
     setError(null);
 
-
+    // Validation
     if (!title.trim()) {
       setError('Task title is required');
       return;
