@@ -51,7 +51,7 @@ class TaskService:
         next_due = base_date + timedelta(days=days_ahead)
 
         # Set due time to end of day
-        next_due = next_due.replace(hour=23, minute=59, second=59, microsecond=999999)
+        next_due = next_due.replace(hour=23, minute=59, second=59)
 
         return next_due
 
