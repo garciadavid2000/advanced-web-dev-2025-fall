@@ -23,9 +23,11 @@ To access the deployed link go to [https://advanced-web-dev-2025-fall-production
 
 ### Docker Instructions
 
-The second way to run the app is to use docker. The repository has a .env.example provided which you need to populate.
+The second way to run the app is to use docker. The repository has a `.env.example` inside of `backend/` provided which you need to populate. Once
+it is populate it you ***MUST RENAME*** it to `.env`
 
-**IMPORTANT:** If you are a TA or the Prof of this class, the exact .env was provided in the .zip that was submitted in canvas with all the keys required.
+**IMPORTANT:** If you are a TA or the Prof of this class, the exact .env was provided in the COMMENTS that was submitted in canvas with all the keys required.
+feel free to copy paste it into `/backend/.env.example` and then rename the file to `.env`
 
 If you have all the proper variables simply run the following command.
 
