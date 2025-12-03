@@ -6,6 +6,7 @@ from app.services.calendar_service import CalendarService
 from app.services.task_service import TaskService
 from app.extensions import oauth
 from app.utils.session_manager import create_session, clear_session, get_current_user
+from app.utils.decorators import login_required
 
 
 @auth_bp.route('/login')
@@ -29,13 +30,41 @@ def logout():
     return {"message": "Logged out"}
 
 
+@auth_bp.route("/test-login", methods=["POST"])
+def test_login():
+    """Test-only endpoint: Create an authenticated session for E2E testing.
+    Only available when TESTING=True.
+    """
+    from flask import current_app
+    
+    if not current_app.config.get("TESTING"):
+        return {"error": "This endpoint is only available in testing mode"}, 403
+    
+    # Get or create a test user
+    from app.services.user_service import UserService
+    test_user = UserService.get_or_create_google_user(
+        google_id="test-user-123",
+        email="test@example.com",
+        name="Test User"
+    )
+    
+    # Create session for this user
+    create_session(test_user)
+    
+    return {
+        "message": "Test session created",
+        "user_id": test_user.id,
+        "email": test_user.email,
+        "name": test_user.name
+    }, 200
+
+
 @auth_bp.route("/calendar/export", methods=["POST"])
+@login_required
 def export_to_calendar():
     """Export all user tasks to Google Calendar"""
     try:
         user = get_current_user()
-        if not user:
-            return jsonify({"error": "User not authenticated"}), 401
         
         # Get user's tasks grouped by date
         tasks_by_date = TaskService.get_user_tasks(user.id)
