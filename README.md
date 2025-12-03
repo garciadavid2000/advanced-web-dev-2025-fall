@@ -69,7 +69,7 @@ pytest test_e2e.py
 ```
 
 If youre curious, here is a video of the end to end testing:
-<iframe width="560" height="315" src="https://www.youtube.com/embed/GPjBr04hN0w?si=JijGY_rJ-rY_2m-e" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[SELENIUM VIDEO HERE](https://youtu.be/GPjBr04hN0w)
 
 ## Project Structure
 
