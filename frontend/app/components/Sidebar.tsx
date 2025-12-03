@@ -16,19 +16,19 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
   const handleExportToCalendar = async () => {
     setIsExporting(true);
     setExportStatus('idle');
-    
+
     try {
       const result = await exportToCalendar();
       setExportStatus('success');
       setExportMessage(`${result.success} tasks exported${result.failed > 0 ? `, ${result.failed} failed` : ''}`);
-      
-      // Clear message after 5 seconds
+
+
       setTimeout(() => setExportStatus('idle'), 5000);
     } catch (error) {
       setExportStatus('error');
       setExportMessage(error instanceof Error ? error.message : 'Failed to export tasks');
-      
-      // Clear message after 5 seconds
+
+
       setTimeout(() => setExportStatus('idle'), 5000);
     } finally {
       setIsExporting(false);
@@ -37,7 +37,7 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
 
   return (
     <aside className="w-72 bg-gray-900 text-white p-6 flex flex-col h-screen shadow-xl">
-      {/* Logo/Brand */}
+
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-[#D97757] flex items-center justify-center">
@@ -48,14 +48,14 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
           <span className="text-xl font-semibold tracking-tight">Tasks</span>
         </div>
 
-        {/* User greeting */}
+
         <div className="px-3 py-2 rounded-lg bg-gray-800/50">
           <p className="text-sm text-gray-400">Welcome back,</p>
           <p className="font-medium text-white truncate">{userName}</p>
         </div>
       </div>
 
-      {/* New Task Button */}
+
       <button
         onClick={onNewTask}
         className="w-full bg-[#D97757] hover:bg-[#C4684A] text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-[#D97757]/20 flex items-center justify-center gap-2 transition-all duration-200"
@@ -66,15 +66,14 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
         New Task
       </button>
 
-      {/* Export to Calendar Button */}
+
       <button
         onClick={handleExportToCalendar}
         disabled={isExporting}
-        className={`w-full mt-3 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 ${
-          isExporting
+        className={`w-full mt-3 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 ${isExporting
             ? 'bg-gray-700 text-gray-300 cursor-not-allowed'
             : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20'
-        }`}
+          }`}
       >
         {isExporting ? (
           <>
@@ -93,23 +92,22 @@ export default function Sidebar({ userName, onNewTask }: SidebarProps) {
         )}
       </button>
 
-      {/* Export Status Message */}
+
       {exportStatus !== 'idle' && (
         <div
-          className={`mt-3 p-3 rounded-lg text-sm font-medium animate-fade-in ${
-            exportStatus === 'success'
+          className={`mt-3 p-3 rounded-lg text-sm font-medium animate-fade-in ${exportStatus === 'success'
               ? 'bg-green-900/30 text-green-300 border border-green-700/50'
               : 'bg-red-900/30 text-red-300 border border-red-700/50'
-          }`}
+            }`}
         >
           {exportMessage}
         </div>
       )}
 
-      {/* Spacer */}
+
       <div className="flex-1 mt-8"></div>
 
-      {/* Footer */}
+
       <div className="pt-4 border-t border-gray-800">
         <p className="text-xs text-gray-500 text-center">Stay productive</p>
       </div>

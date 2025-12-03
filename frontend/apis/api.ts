@@ -105,9 +105,7 @@ export function getEarliestDueDate(tasks: TasksByDate, taskId: number): string |
   return null;
 }
 
-/**
- * Check if a task occurrence can be completed (is the earliest occurrence of that task)
- */
+
 /**
  * Check if a task occurrence can be completed (is the earliest occurrence of that task)
  */

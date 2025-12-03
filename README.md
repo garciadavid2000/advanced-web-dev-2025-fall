@@ -125,26 +125,28 @@ This allows us to see if there are any problems **before** merging into main.
 After making sure that the tests all ran successfully, we are then able to merge into main. Once the branch has been merged the testing pipeline is run one more time with the merged codebase
 to make sure everything works as expected. If this succeeds, Railway then automatically detects that the pipeline was a success and begins the deployment process.
 
+### Deployment Strategy
+
 There are three main parts of our app that we'll be focusing on for deployment. Our frontend, backend, and main dockerfile.
 
 ![app before deployment](./documentation_screenshots/deplpoyment-comic/1.PNG)
-
-When we're done working on a feature in a branch, we make a pull request into the main branch. Tests are run in github before the code gets merged. If it all looks good, the code gets merged.
+---
+When we're done working on a feature in a branch, we make a pull request into the main branch. Tests are automatically run in github actions before the code gets merged. If it all looks good, the code gets merged.
 
 ![first tests](./documentation_screenshots/deplpoyment-comic/2.PNG)
-
-Once the code is merged into main, it gets tested one more time to make sure that it works nicely along the rest of the main code.
+---
+Once the code is merged into main, it gets tested by github actions one more time to make sure that it works nicely along the rest of the main code.
 
 ![next tests](./documentation_screenshots/deplpoyment-comic/3.PNG)
-
+---
 If the tests pass in MAIN, it all gets sent up to Railway, the spot where we host our app.
 
 ![going off to railway](./documentation_screenshots/deplpoyment-comic/4.PNG)
-
+---
 The dockerfile then gets all the environment variables from Railway, and all the backend dependencies are installed.
 
 ![dockerfile compiling](./documentation_screenshots/deplpoyment-comic/5.PNG)
-
+---
 The frontend is compiled with the dockerfile, and broken down into raw, servable compiled html js and css files. These files are then copied into the backend directory `/backend/static/frontend`. Once the files are in there, the backend is able to serve them on the same url as the backend, with different endpoints.
 
 ![frontend compiling](./documentation_screenshots/deplpoyment-comic/6.PNG)
