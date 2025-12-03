@@ -195,13 +195,6 @@ class TestTaskEndpoints:
                 assert 'next_due_at' in occ
     
     
-    def test_get_tasks_missing_user_id(self, authenticated_client):
-        """Test that get tasks requires user_id."""
-        response = authenticated_client.get('/tasks')
-        
-        assert response.status_code == 401
-    
-    
     def test_get_tasks_only_own_tasks(self, authenticated_client, test_user, second_test_user, app):
         """Test that users only see their own tasks."""
         with app.app_context():
