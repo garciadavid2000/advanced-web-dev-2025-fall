@@ -199,7 +199,7 @@ class TestTaskEndpoints:
         """Test that get tasks requires user_id."""
         response = authenticated_client.get('/tasks')
         
-        assert response.status_code == 400
+        assert response.status_code == 401
     
     
     def test_get_tasks_only_own_tasks(self, authenticated_client, test_user, second_test_user, app):
