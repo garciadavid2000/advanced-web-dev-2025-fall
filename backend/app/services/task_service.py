@@ -145,27 +145,27 @@ class TaskService:
         return sorted_grouped
 
     @staticmethod
-    def update_task_name(task_id, new_title):
+    def update_task_name(user_id, task_id, new_title):
         """Update the title of a task"""
         task = db.session.get(Task, task_id)
-        if task:
+        if task and task.user_id == user_id:
             task.title = new_title
             db.session.commit()
             return task
         return None
 
     @staticmethod
-    def delete_task(task_id):
+    def delete_task(user_id, task_id):
         """Delete a task and all its occurrences"""
         task = db.session.get(Task, task_id)
-        if task:
+        if task and task.user_id == user_id:
             db.session.delete(task)
             db.session.commit()
             return True
         return False
 
     @staticmethod
-    def complete_task(occurrence_id):
+    def complete_task(user_id, occurrence_id):
         """Mark a task as completed and create next occurrence
         """
         occurrence = db.session.get(TaskOccurrences, occurrence_id)
@@ -175,7 +175,7 @@ class TaskService:
         task_id = occurrence.task_id
 
         task = db.session.get(Task, task_id)
-        if not task:
+        if not task or task.user_id != user_id:
             return None
             
         # Get the current occurrence

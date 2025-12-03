@@ -46,9 +46,14 @@ export default function MainPage() {
         const errorMessage = err instanceof Error ? err.message : 'An error occurred';
         console.error('Error loading data:', err);
 
-        // If UnauthorizedError, redirect to sign-in
+        // If UnauthorizedError, redirect to sign-in (unless in test mode)
         if (err instanceof Error && err.name === 'UnauthorizedError') {
-          router.push('/signin');
+          if (process.env.NEXT_PUBLIC_TEST_MODE !== 'true') {
+            router.push('/signin');
+          } else {
+            console.log("TEST MODE ACTIVATED!!")
+            setError('Test mode: Authentication failed. Ensure backend test-login endpoint is available.');
+          }
         } else {
           setError(errorMessage);
         }
