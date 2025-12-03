@@ -35,4 +35,4 @@ jobs:
       # Using 'xvfb' on Linux allows browsers to launch 'headlessly' if needed
       shell: bash 
       run: |
-        python /backend/tests/test_e2e.py
+        python backend/tests/test_e2e.py
